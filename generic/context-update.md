@@ -1,9 +1,11 @@
 # /context-update - Project Context Updater
 
 ## Objetivo
-Mantener el archivo `CLAUDE.md` actualizado con los cambios recientes del proyecto, preservando el contexto existente y detectando nuevas tecnologías, patrones o convenciones introducidas.
+
+Mantener el archivo `GEMINI.md` actualizado con los cambios recientes del proyecto, preservando el contexto existente y detectando nuevas tecnologías, patrones o convenciones introducidas.
 
 **Ejecutar después de:**
+
 - Completar un ciclo completo (`/architect` → `/developer` → `/tester` → `/security-auditor`)
 - Merges grandes o nuevas features
 - Cambios significativos en dependencias o arquitectura
@@ -13,7 +15,8 @@ Mantener el archivo `CLAUDE.md` actualizado con los cambios recientes del proyec
 
 ## PREREQUISITO
 
-Verificar que existe `CLAUDE.md`:
+Verificar que existe `.agent/rules/GEMINI.md`:
+
 - Si NO existe → Sugerir ejecutar `/init` primero
 - Si SÍ existe → Leerlo para tener la referencia base
 
@@ -27,8 +30,8 @@ Verificar que existe `CLAUDE.md`:
 # Últimos 20 commits con archivos modificados
 git log --oneline --name-status -20
 
-# Commits desde la última actualización del CLAUDE.md
-git log --oneline --since="$(git log -1 --format=%ci CLAUDE.md 2>/dev/null || echo '1 week ago')"
+# Commits desde la última actualización del GEMINI.md
+git log --oneline --since="$(git log -1 --format=%ci GEMINI.md 2>/dev/null || echo '1 week ago')"
 
 # Archivos modificados recientemente
 git diff --name-only HEAD~20 HEAD 2>/dev/null || git diff --name-only
@@ -47,16 +50,16 @@ git diff --name-status HEAD~20 HEAD | grep "^R" | cut -f2-3
 
 Revisar archivos de dependencias por cambios:
 
-| Stack | Archivo | Qué buscar |
-|-------|---------|------------|
-| Node.js | `package.json` | Nuevas dependencies/devDependencies |
-| Python | `requirements.txt`, `pyproject.toml`, `Pipfile` | Nuevas líneas |
-| Java | `pom.xml`, `build.gradle` | Nuevas dependencies |
-| Go | `go.mod` | Nuevos require |
-| Rust | `Cargo.toml` | Nuevas dependencies |
-| .NET | `*.csproj` | Nuevos PackageReference |
-| PHP | `composer.json` | Nuevos require |
-| Ruby | `Gemfile` | Nuevas gem |
+| Stack   | Archivo                                         | Qué buscar                          |
+| ------- | ----------------------------------------------- | ----------------------------------- |
+| Node.js | `package.json`                                  | Nuevas dependencies/devDependencies |
+| Python  | `requirements.txt`, `pyproject.toml`, `Pipfile` | Nuevas líneas                       |
+| Java    | `pom.xml`, `build.gradle`                       | Nuevas dependencies                 |
+| Go      | `go.mod`                                        | Nuevos require                      |
+| Rust    | `Cargo.toml`                                    | Nuevas dependencies                 |
+| .NET    | `*.csproj`                                      | Nuevos PackageReference             |
+| PHP     | `composer.json`                                 | Nuevos require                      |
+| Ruby    | `Gemfile`                                       | Nuevas gem                          |
 
 ```bash
 # Diff de archivos de dependencias
@@ -67,6 +70,7 @@ git diff HEAD~20 HEAD -- package.json pom.xml build.gradle requirements.txt \
 ### 1.3 Cambios Estructurales
 
 Detectar:
+
 - [ ] Nuevas carpetas/módulos añadidos
 - [ ] Carpetas eliminadas o renombradas
 - [ ] Reorganización de estructura
@@ -89,6 +93,7 @@ git diff --name-status HEAD~20 HEAD | grep "^D" | \
 ### 2.1 Nuevas Tecnologías
 
 **Analizar dependencias nuevas:**
+
 - ¿Se añadió un nuevo framework?
 - ¿Se añadió una nueva librería importante (ORM, cache, auth)?
 - ¿Se añadió una nueva herramienta de testing?
@@ -98,12 +103,14 @@ git diff --name-status HEAD~20 HEAD | grep "^D" | \
 ### 2.2 Nuevos Patrones
 
 **Buscar en código nuevo:**
+
 - ¿Se introdujo un nuevo patrón de diseño?
 - ¿Se creó una nueva capa/abstracción?
 - ¿Hay nuevos tipos de componentes?
 - ¿Se introdujeron nuevas convenciones de naming?
 
 **Indicadores por nombre de archivo:**
+
 - Archivos con sufijos nuevos (`*Strategy`, `*Factory`, `*Handler`, `*Middleware`)
 - Nuevas carpetas en la estructura (`middleware/`, `guards/`, `pipes/`)
 - Nuevos decoradores/anotaciones
@@ -119,6 +126,7 @@ git diff --name-status HEAD~20 HEAD | grep "^A" | \
 ### 2.3 Nuevas Convenciones
 
 **Comparar código nuevo vs existente:**
+
 - ¿Se mantiene el mismo estilo de naming?
 - ¿Se usan las mismas convenciones de código?
 - ¿Los tests siguen el mismo patrón?
@@ -139,6 +147,7 @@ git diff --name-status HEAD~20 HEAD | grep "^A" | \
 ```
 
 **Para cada archivo nuevo, detectar:**
+
 - Módulo/carpeta al que pertenece
 - Tipo de componente (controller, service, model, etc.)
 - Dependencias que usa/importa
@@ -154,6 +163,7 @@ git diff --name-status HEAD~20 HEAD | grep "^A" | \
 ```
 
 **Verificar si los tests nuevos:**
+
 - Siguen la convención existente documentada
 - Usan el mismo framework
 - Mantienen la estructura documentada (Given/When/Then, Arrange/Act/Assert)
@@ -161,11 +171,12 @@ git diff --name-status HEAD~20 HEAD | grep "^A" | \
 
 ---
 
-## FASE 4: COMPARACIÓN CON CLAUDE.md ACTUAL
+## FASE 4: COMPARACIÓN CON GEMINI.md ACTUAL
 
-### 4.1 Leer CLAUDE.md Existente
+### 4.1 Leer GEMINI.md Existente
 
 Cargar el contenido actual y hacer un inventario de:
+
 - Stack tecnológico documentado
 - Estructura del proyecto documentada
 - Convenciones documentadas
@@ -174,20 +185,21 @@ Cargar el contenido actual y hacer un inventario de:
 
 ### 4.2 Identificar Desactualizaciones
 
-| Sección | Actualizar si... |
-|---------|------------------|
-| Stack Tecnológico | Se añadieron/actualizaron/eliminaron dependencias |
-| Arquitectura | Se añadieron nuevas capas/módulos |
-| Estructura | Cambió el árbol de directorios |
-| Convenciones de Código | Se detectaron nuevos patrones de naming |
-| Testing | Se añadieron nuevos tipos de tests o cambió el framework |
-| Comandos Útiles | Se añadieron nuevos scripts en package.json/Makefile |
-| Variables de Entorno | Se añadieron nuevas variables en .env.example |
-| Reglas de Desarrollo | Se detectaron nuevas convenciones |
+| Sección                | Actualizar si...                                         |
+| ---------------------- | -------------------------------------------------------- |
+| Stack Tecnológico      | Se añadieron/actualizaron/eliminaron dependencias        |
+| Arquitectura           | Se añadieron nuevas capas/módulos                        |
+| Estructura             | Cambió el árbol de directorios                           |
+| Convenciones de Código | Se detectaron nuevos patrones de naming                  |
+| Testing                | Se añadieron nuevos tipos de tests o cambió el framework |
+| Comandos Útiles        | Se añadieron nuevos scripts en package.json/Makefile     |
+| Variables de Entorno   | Se añadieron nuevas variables en .env.example            |
+| Reglas de Desarrollo   | Se detectaron nuevas convenciones                        |
 
 ### 4.3 Detectar Inconsistencias
 
 **Alertar si:**
+
 - [ ] Código nuevo NO sigue las convenciones documentadas
 - [ ] Se usan patrones diferentes a los documentados
 - [ ] Naming inconsistente con lo establecido
@@ -202,6 +214,7 @@ Cargar el contenido actual y hacer un inventario de:
 ### 5.1 Reglas de Actualización
 
 **OBLIGATORIO:**
+
 1. **NO eliminar** información existente válida
 2. **AÑADIR** nuevas tecnologías/patrones detectados
 3. **ACTUALIZAR** versiones si cambiaron
@@ -216,12 +229,12 @@ Para secciones actualizadas, indicar claramente qué es nuevo:
 ```markdown
 ## Stack Tecnológico
 
-| Categoría | Tecnología | Versión | Estado |
-|-----------|------------|---------|--------|
-| Framework | Express | 4.18 | Existente |
-| Cache | Redis | 7.0 | **NUEVO** |
-| Testing | Vitest | 1.0 | **ACTUALIZADO** (era Jest) |
-| ORM | Sequelize | - | **ELIMINADO** |
+| Categoría | Tecnología | Versión | Estado                     |
+| --------- | ---------- | ------- | -------------------------- |
+| Framework | Express    | 4.18    | Existente                  |
+| Cache     | Redis      | 7.0     | **NUEVO**                  |
+| Testing   | Vitest     | 1.0     | **ACTUALIZADO** (era Jest) |
+| ORM       | Sequelize  | -       | **ELIMINADO**              |
 
 ## Nuevos Patrones Detectados
 
@@ -231,7 +244,7 @@ Para secciones actualizadas, indicar claramente qué es nuevo:
 
 ### 5.3 Añadir Changelog
 
-Al final del CLAUDE.md:
+Al final del GEMINI.md:
 
 ```markdown
 ---
@@ -239,6 +252,7 @@ Al final del CLAUDE.md:
 ## Changelog de Contexto
 
 ### {YYYY-MM-DD}
+
 - **Nuevas dependencias:** {lista o "Ninguna"}
 - **Nuevos módulos:** {lista o "Ninguno"}
 - **Nuevos patrones:** {lista o "Ninguno"}
@@ -257,12 +271,14 @@ Al final del CLAUDE.md:
 # Resumen de Actualización
 
 ## Cambios Detectados
+
 - X archivos nuevos analizados
 - X dependencias nuevas / Y actualizadas / Z eliminadas
 - X patrones nuevos introducidos
 - X módulos/carpetas añadidos
 
-## Secciones Actualizadas en CLAUDE.md
+## Secciones Actualizadas en GEMINI.md
+
 - [ ] Stack Tecnológico
 - [ ] Arquitectura
 - [ ] Estructura del Proyecto
@@ -272,10 +288,12 @@ Al final del CLAUDE.md:
 - [ ] Variables de Entorno
 
 ## Inconsistencias Encontradas
+
 - {descripción de cada inconsistencia}
 - {qué convención se viola y dónde}
 
 ## Acción Requerida
+
 - Confirmar cambios propuestos
 - Revisar inconsistencias detectadas
 ```
@@ -283,7 +301,8 @@ Al final del CLAUDE.md:
 ### 6.2 Solicitar Confirmación
 
 Antes de guardar:
-1. Mostrar diff del CLAUDE.md (cambios propuestos)
+
+1. Mostrar diff del GEMINI.md (cambios propuestos)
 2. Listar cambios organizados por sección
 3. Solicitar confirmación del usuario
 4. Opción de ajustar manualmente antes de guardar
@@ -293,7 +312,7 @@ Antes de guardar:
 ## OUTPUT ESPERADO
 
 1. **Análisis de cambios** mostrado al usuario
-2. **CLAUDE.md actualizado** preservando contexto existente
+2. **GEMINI.md actualizado** preservando contexto existente
 3. **Changelog** añadido con fecha y cambios
 4. **Alertas** de inconsistencias si se detectaron
 5. **Resumen** de la actualización realizada
@@ -318,9 +337,10 @@ Antes de guardar:
 - **No sobrescribir** personalizaciones manuales del usuario
 - **Alertar** sobre inconsistencias, no corregir código automáticamente
 - Si hay **muchos cambios**, sugerir `/init` completo
-- **Backup** antes de modificar: `cp CLAUDE.md CLAUDE.md.bak`
+- **Backup** antes de modificar: `cp GEMINI.md GEMINI.md.bak`
 
 ### Indicadores de que se necesita `/init` completo:
+
 - Cambio de framework principal o migración significativa
 - Reestructuración mayor de directorios o módulos
 - Más de 50 archivos nuevos desde el último análisis
@@ -340,9 +360,10 @@ Antes de guardar:
 
 Si el proyecto ha evolucionado significativamente, considerar ejecutar `/init` nuevamente.
 
-### Verificación de Calidad del CLAUDE.md
+### Verificación de Calidad del GEMINI.md
 
-**Después de actualizar, el CLAUDE.md debe:**
+**Después de actualizar, el GEMINI.md debe:**
+
 - Ser una guía completa para cualquier desarrollador nuevo en el proyecto
 - Reflejar fielmente el estado actual del código, no un estado deseado
 - Incluir solo convenciones verificables con ejemplos reales del proyecto
