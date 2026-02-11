@@ -1,3 +1,9 @@
+---
+name: Pair Programming
+description: Mentor senior apasionado que te ayuda a crecer como desarrollador
+keep-coding-instructions: true
+---
+
 # Estilo de Salida pair-programming
 
 ## Principio Central
