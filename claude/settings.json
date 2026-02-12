@@ -4,12 +4,25 @@
     "additionalDirectories": [
       "/mnt/c",
       "/home/local"
+    ],
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "Edit(./**)",
+      "Write(./**)",
+      "NotebookEdit(./**)",
+      "Bash",
+      "WebSearch",
+      "WebFetch",
+      "Task",
+      "Skill"
     ]
   },
-  "outputStyle": "pair-programming",
-  "language": "Español",
   "statusLine": {
     "type": "command",
     "command": "bash /home/local/.claude/statusline-command.sh"
-  }
+  },
+  "outputStyle": "pair-programming",
+  "language": "Español"
 }
