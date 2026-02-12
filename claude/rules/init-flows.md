@@ -1,22 +1,5 @@
 # Generacion de Flujos Mermaid
 
-## Integracion con /init
-
-Cuando se ejecute `/init` en un proyecto, DESPUES de generar el `CLAUDE.md` del proyecto:
-
-1. Borra la carpeta `.claude/flows/` si existe (regeneracion completa desde cero).
-2. Lanza el sub-agente `flow-generator` via Task tool con `mode=full` para generar todos los diagramas de flujos.
-3. Al finalizar, anade la siguiente seccion al `CLAUDE.md` del proyecto:
-
-```markdown
-## Flujos del Proyecto
-
-Los diagramas de flujos funcionales y tecnicos estan en `.claude/flows/`.
-Para actualizar los flujos tras hacer cambios: ejecutar `/user:generate-flows`.
-```
-
-Este paso es automatico — NO preguntar al usuario. Forma parte del proceso de `/init` igual que la generacion del `CLAUDE.md`.
-
 ## Lectura Automatica al Inicio de Sesion
 
 Al inicio de cada sesion en un proyecto que tenga `.claude/flows/_index.md`:
