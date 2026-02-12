@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "defaultMode": "plan",
+    "additionalDirectories": [
+      "/mnt/c",
+      "/home/local"
+    ]
+  },
+  "outputStyle": "pair-programming",
+  "language": "Español",
+  "statusLine": {
+    "type": "command",
+    "command": "bash /home/local/.claude/statusline-command.sh"
+  }
+}
