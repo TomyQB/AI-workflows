@@ -1,0 +1,37 @@
+{
+  "eval_id": 2,
+  "eval_name": "interceptor-mdc-semaphore",
+  "prompt": "Crea un HandlerInterceptor que lea el header X-Openpay-Trace-Id, lo ponga en MDC, y controle concurrencia con un Semaphore que permita maximo 1 peticion simultanea por traceId+endpoint. Incluye el registro en WebMvcConfigurer.",
+  "assertions": [
+    {
+      "id": "final_parameters",
+      "text": "All method parameters use the 'final' keyword",
+      "type": "code_pattern"
+    },
+    {
+      "id": "mdc_cleanup",
+      "text": "MDC.remove() is called in afterCompletion to prevent thread leaks",
+      "type": "code_pattern"
+    },
+    {
+      "id": "semaphore_release",
+      "text": "Semaphore.release() is called in afterCompletion (even on exceptions)",
+      "type": "code_pattern"
+    },
+    {
+      "id": "stringutils_blank_check",
+      "text": "Uses StringUtils.isNotBlank() or StringUtils.isBlank() for header null/empty checks instead of == null",
+      "type": "code_pattern"
+    },
+    {
+      "id": "webmvc_registration",
+      "text": "Interceptors are registered in a WebMvcConfigurer with addPathPatterns",
+      "type": "code_pattern"
+    },
+    {
+      "id": "constants_static_final",
+      "text": "Header names and MDC keys are private static final constants, not inline strings",
+      "type": "code_pattern"
+    }
+  ]
+}

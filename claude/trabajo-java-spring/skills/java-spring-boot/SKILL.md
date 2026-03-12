@@ -6,7 +6,9 @@ description: >
   Triggers: (1) Creating new Java classes, services, controllers, DTOs, or entities,
   (2) Writing or modifying Spring Boot application code, (3) Reviewing Java code for
   best practices, (4) Implementing REST APIs with Spring Boot, (5) Any task involving
-  .java files in a Spring Boot project.
+  .java files in a Spring Boot project, (6) Configuring REST clients (RestClient, WebClient)
+  for microservice communication, (7) Implementing interceptors, caching, or cross-cutting
+  concerns, (8) Working with MongoDB repositories, documents, or auditing.
 ---
 
 # Java Spring Boot Standards
@@ -114,8 +116,8 @@ Mapper      (@Component)
   -> toEntity() / toResponse() / toResponseList()
   -> sin logica de negocio
 
-Repository  (extends JpaRepository)
-  -> derived queries + @Query JPQL
+Repository  (extends JpaRepository / MongoRepository)
+  -> derived queries + @Query (JPQL o MongoDB nativo)
   -> Optional para ID unico, List para multiples
   -> Resolver Optional internamente: orElseThrow() en el Repository, NO en el Service
   -> El Service recibe tipos concretos, nunca Optional
@@ -131,6 +133,7 @@ Exception   (@RestControllerAdvice)
 | Contexto | Anotaciones |
 |----------|-------------|
 | Entidades JPA | `@Getter @Builder @NoArgsConstructor(access=PROTECTED) @AllArgsConstructor(access=PRIVATE)` |
+| Entidades MongoDB (con herencia) | `@Getter @SuperBuilder @NoArgsConstructor(access=PROTECTED) @AllArgsConstructor(access=PRIVATE)` |
 | DTOs (record) | `@Builder` |
 | Services/Components | `@RequiredArgsConstructor` |
 | Logging | `@Slf4j` |
@@ -147,7 +150,65 @@ public record CreateRequest(
 ) {}
 ```
 
+## REST Clients Quick Reference
+
+```
+RestClient   (@Configuration, @Bean nombrado, @Qualifier)
+  -> Un bean por microservicio externo
+  -> Base URL desde @ConfigurationProperties (record)
+  -> Timeouts obligatorios: connect + read
+  -> SSL/TLS custom para APIs externas
+
+WebClient    (Reactivo, Retry.backoff, ExchangeFilterFunction)
+  -> Retry con backoff exponencial para errores transitorios (5xx, timeout)
+  -> ExchangeFilterFunction para logging y headers custom
+  -> WebClientTemplate abstracto para reutilizacion entre servicios
+  -> .block() solo en contextos no-reactivos
+```
+
+**Regla de decision:** RestClient para llamadas simples sin retry. WebClient para retry con backoff, circuit breaker, o flujos reactivos.
+
+## Interceptors y Caching Quick Reference
+
+```
+HandlerInterceptor  (preHandle, afterCompletion)
+  -> Logica pre/post request HTTP entrante (nivel Spring MVC)
+  -> Registrar en WebMvcConfigurer.addInterceptors()
+  -> Semaphore para control de concurrencia
+  -> MDC para propagacion de trace IDs
+
+ClientHttpRequestInterceptor
+  -> Intercepta peticiones HTTP salientes (RestClient/RestTemplate)
+  -> Logging de requests/responses a otros microservicios
+
+Caching      (@Cacheable, @CacheEvict, CacheManager)
+  -> @Cacheable con cache manager nombrado y key explicita
+  -> SIEMPRE tener @CacheEvict correspondiente por cada @Cacheable
+  -> @EnableCaching en la clase de configuracion
+  -> Nunca cachear datos transaccionales
+```
+
+## MongoDB y Auditing Quick Reference
+
+```
+MongoRepository  (extends MongoRepository<Entity, String>)
+  -> @Query con sintaxis JSON nativa: { 'field': ?0 }
+  -> Parametros zero-based (?0, ?1)
+  -> @Document(collection = "nombre") siempre explicito
+  -> @Indexed en cada campo consultado
+
+AuditMetadata    (clase abstracta, @SuperBuilder)
+  -> @CreatedDate, @LastModifiedDate, @CreatedBy, @LastModifiedBy, @Version
+  -> TODA entidad MongoDB DEBE extender AuditMetadata
+  -> @SuperBuilder en clase base Y en hija (obligatorio para herencia Lombok)
+  -> @EnableMongoAuditing + AuditorAware bean
+  -> AuditorAware NUNCA retorna Optional.empty() (fallback "system")
+```
+
 ## Detailed References
 
 - **Modern Java patterns** (Records, Sealed Classes, Pattern Matching, Inmutabilidad, Funcional, Virtual Threads): see [references/patterns.md](references/patterns.md)
 - **Spring Boot architecture** (Controller, Service, Validator, Mapper, Repository, Exceptions, Entities, Config): see [references/architecture.md](references/architecture.md)
+- **REST Clients** (RestClient beans, SSL/TLS, WebClient retry, ExchangeFilterFunction, WebClientTemplate): see [references/rest-clients.md](references/rest-clients.md)
+- **Interceptors y Caching** (HandlerInterceptor, Semaphore, MDC, ClientHttpRequestInterceptor, @Cacheable, @CacheEvict): see [references/interceptors-caching.md](references/interceptors-caching.md)
+- **MongoDB y Auditing** (MongoRepository, @Document, @Indexed, AuditMetadata, @EnableMongoAuditing, AuditorAware): see [references/mongodb-auditing.md](references/mongodb-auditing.md)

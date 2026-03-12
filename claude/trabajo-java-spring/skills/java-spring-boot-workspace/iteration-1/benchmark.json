@@ -1,0 +1,94 @@
+{
+  "skill_name": "java-spring-boot",
+  "iteration": 1,
+  "configurations": [
+    {
+      "name": "with_skill",
+      "evals": [
+        {
+          "eval_id": 1,
+          "eval_name": "restclient-configuration",
+          "pass_rate": 1.0,
+          "passed": 6,
+          "total": 6,
+          "tokens": 30726,
+          "duration_seconds": 55.2
+        },
+        {
+          "eval_id": 2,
+          "eval_name": "interceptor-mdc-semaphore",
+          "pass_rate": 1.0,
+          "passed": 6,
+          "total": 6,
+          "tokens": 28756,
+          "duration_seconds": 41.6
+        },
+        {
+          "eval_id": 3,
+          "eval_name": "mongodb-entity-auditing",
+          "pass_rate": 1.0,
+          "passed": 6,
+          "total": 6,
+          "tokens": 32000,
+          "duration_seconds": 50.0
+        }
+      ],
+      "aggregate": {
+        "mean_pass_rate": 1.0,
+        "stddev_pass_rate": 0.0,
+        "mean_tokens": 30494,
+        "mean_duration_seconds": 48.9
+      }
+    },
+    {
+      "name": "without_skill",
+      "evals": [
+        {
+          "eval_id": 1,
+          "eval_name": "restclient-configuration",
+          "pass_rate": 0.833,
+          "passed": 5,
+          "total": 6,
+          "tokens": 19151,
+          "duration_seconds": 30.9
+        },
+        {
+          "eval_id": 2,
+          "eval_name": "interceptor-mdc-semaphore",
+          "pass_rate": 0.667,
+          "passed": 4,
+          "total": 6,
+          "tokens": 19535,
+          "duration_seconds": 32.5
+        },
+        {
+          "eval_id": 3,
+          "eval_name": "mongodb-entity-auditing",
+          "pass_rate": 0.833,
+          "passed": 5,
+          "total": 6,
+          "tokens": 19814,
+          "duration_seconds": 33.1
+        }
+      ],
+      "aggregate": {
+        "mean_pass_rate": 0.778,
+        "stddev_pass_rate": 0.096,
+        "mean_tokens": 19500,
+        "mean_duration_seconds": 32.2
+      }
+    }
+  ],
+  "delta": {
+    "pass_rate": "+22.2%",
+    "tokens": "+56.4%",
+    "duration": "+51.9%"
+  },
+  "analyst_observations": [
+    "El skill mejora la pass rate de 77.8% a 100% — un delta de +22.2 puntos porcentuales",
+    "Las assertions que el baseline SIEMPRE falla son: 'final_parameters' (eval 1 y 2) y 'stringutils_blank_check' (eval 2). Estas son convenciones que Claude no aplica por defecto sin instrucciones explícitas",
+    "La assertion 'super_builder' (eval 3) es discriminante: sin skill, Claude usa getters/setters manuales; con skill, usa @SuperBuilder correctamente para herencia Lombok",
+    "El coste del skill es ~56% más tokens y ~52% más tiempo (porque el agente lee el SKILL.md + reference file). Este overhead es aceptable dado que la calidad del código es significativamente mejor",
+    "Las assertions que SIEMPRE pasan (con y sin skill) son: named_beans, timeouts_configured, qualifier_injection, no_hardcoded_urls, mdc_cleanup, semaphore_release, document_explicit_collection, indexed_fields, audit_fields, auditor_fallback, query_mongodb_syntax. Estas son prácticas que Claude ya conoce bien sin skill — son no-discriminantes"
+  ]
+}

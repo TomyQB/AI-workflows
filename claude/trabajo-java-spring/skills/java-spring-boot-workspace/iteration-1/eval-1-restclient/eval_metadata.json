@@ -1,0 +1,37 @@
+{
+  "eval_id": 1,
+  "eval_name": "restclient-configuration",
+  "prompt": "Crea una clase de configuracion con dos RestClient beans nombrados: uno para el servicio de pagos (payments-api) y otro para el servicio de notificaciones (notifications-api). Ambos deben tener base URL desde ConfigurationProperties y timeouts configurados.",
+  "assertions": [
+    {
+      "id": "final_parameters",
+      "text": "All method parameters use the 'final' keyword",
+      "type": "code_pattern"
+    },
+    {
+      "id": "named_beans",
+      "text": "Each RestClient bean has an explicit name via @Bean(name = \"...\") or @Bean(\"...\")",
+      "type": "code_pattern"
+    },
+    {
+      "id": "config_properties_record",
+      "text": "Configuration properties are defined as Java records with @ConfigurationProperties",
+      "type": "code_pattern"
+    },
+    {
+      "id": "timeouts_configured",
+      "text": "Both RestClient beans have connect and read timeouts configured",
+      "type": "code_pattern"
+    },
+    {
+      "id": "qualifier_injection",
+      "text": "Service class uses @Qualifier to inject the correct named RestClient bean",
+      "type": "code_pattern"
+    },
+    {
+      "id": "no_hardcoded_urls",
+      "text": "No hardcoded URLs in the code — all URLs come from ConfigurationProperties",
+      "type": "code_pattern"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "eval_id": 3,
+  "configuration": "without_skill",
+  "expectations": [
+    {
+      "text": "Uses @SuperBuilder (not @Builder) on BOTH AuditMetadata and PartnerEntity",
+      "passed": false,
+      "evidence": "Neither AuditMetadata nor PartnerEntity use @SuperBuilder or @Builder. Both use manual getters AND setters (violating immutability). No Lombok at all."
+    },
+    {
+      "text": "@Document annotation includes explicit collection name: @Document(collection = \"...\")",
+      "passed": true,
+      "evidence": "@Document(collection = \"partners\") on PartnerEntity"
+    },
+    {
+      "text": "@Indexed on merchantId (with unique=true) and status fields",
+      "passed": true,
+      "evidence": "@Indexed(unique = true) on merchantId, @Indexed on status"
+    },
+    {
+      "text": "AuditMetadata has all 5 audit fields: @CreatedDate, @LastModifiedDate, @CreatedBy, @LastModifiedBy, @Version",
+      "passed": true,
+      "evidence": "All 5 present: createdDate, lastModifiedDate, createdBy, lastModifiedBy, version"
+    },
+    {
+      "text": "AuditorAware implementation never returns Optional.empty() — has a fallback like 'system'",
+      "passed": true,
+      "evidence": "Returns Optional.of(\"system\") when authentication is null or not authenticated"
+    },
+    {
+      "text": "@Query uses MongoDB JSON syntax (e.g., { 'field': ?0 }) not JPQL",
+      "passed": true,
+      "evidence": "@Query(\"{ 'status': ?0, 'createdDate': { $gt: ?1 } }\") — correct MongoDB syntax"
+    }
+  ],
+  "pass_rate": 0.833
+}

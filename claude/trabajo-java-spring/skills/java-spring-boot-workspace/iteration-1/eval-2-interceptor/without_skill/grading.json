@@ -1,0 +1,37 @@
+{
+  "eval_id": 2,
+  "configuration": "without_skill",
+  "expectations": [
+    {
+      "text": "All method parameters use the 'final' keyword",
+      "passed": false,
+      "evidence": "preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) and afterCompletion parameters lack final in both interceptors"
+    },
+    {
+      "text": "MDC.remove() is called in afterCompletion to prevent thread leaks",
+      "passed": true,
+      "evidence": "TraceIdInterceptor.afterCompletion calls MDC.remove(MDC_TRACE_KEY)"
+    },
+    {
+      "text": "Semaphore.release() is called in afterCompletion (even on exceptions)",
+      "passed": true,
+      "evidence": "RequestLockInterceptor.afterCompletion calls semaphore.release() with cleanup of lockMap entry"
+    },
+    {
+      "text": "Uses StringUtils.isNotBlank() or StringUtils.isBlank() for header null/empty checks instead of == null",
+      "passed": false,
+      "evidence": "TraceIdInterceptor uses 'traceId == null || traceId.isBlank()'. RequestLockInterceptor uses 'traceId == null || traceId.isBlank()' and 'lockKey != null' and 'semaphore != null'"
+    },
+    {
+      "text": "Interceptors are registered in a WebMvcConfigurer with addPathPatterns",
+      "passed": true,
+      "evidence": "WebMvcConfig implements WebMvcConfigurer, registers both interceptors with .addPathPatterns(\"/**\")"
+    },
+    {
+      "text": "Header names and MDC keys are private static final constants, not inline strings",
+      "passed": true,
+      "evidence": "TRACE_HEADER, MDC_TRACE_KEY, LOCK_KEY_ATTRIBUTE are all private static final"
+    }
+  ],
+  "pass_rate": 0.667
+}

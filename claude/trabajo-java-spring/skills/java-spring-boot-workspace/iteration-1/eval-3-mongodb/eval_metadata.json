@@ -1,0 +1,37 @@
+{
+  "eval_id": 3,
+  "eval_name": "mongodb-entity-auditing",
+  "prompt": "Crea una entidad MongoDB llamada PartnerEntity con auditoria completa (AuditMetadata base class), indices en merchantId (unique) y status, y un MongoRepository con una query custom que busque por status y fecha de creacion mayor a una fecha dada.",
+  "assertions": [
+    {
+      "id": "super_builder",
+      "text": "Uses @SuperBuilder (not @Builder) on BOTH AuditMetadata and PartnerEntity",
+      "type": "code_pattern"
+    },
+    {
+      "id": "document_explicit_collection",
+      "text": "@Document annotation includes explicit collection name: @Document(collection = \"...\")",
+      "type": "code_pattern"
+    },
+    {
+      "id": "indexed_fields",
+      "text": "@Indexed on merchantId (with unique=true) and status fields",
+      "type": "code_pattern"
+    },
+    {
+      "id": "audit_fields",
+      "text": "AuditMetadata has all 5 audit fields: @CreatedDate, @LastModifiedDate, @CreatedBy, @LastModifiedBy, @Version",
+      "type": "code_pattern"
+    },
+    {
+      "id": "auditor_fallback",
+      "text": "AuditorAware implementation never returns Optional.empty() — has a fallback like 'system'",
+      "type": "code_pattern"
+    },
+    {
+      "id": "query_mongodb_syntax",
+      "text": "@Query uses MongoDB JSON syntax (e.g., { 'field': ?0 }) not JPQL",
+      "type": "code_pattern"
+    }
+  ]
+}

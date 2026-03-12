@@ -1,0 +1,37 @@
+{
+  "eval_id": 1,
+  "configuration": "with_skill",
+  "expectations": [
+    {
+      "text": "All method parameters use the 'final' keyword",
+      "passed": true,
+      "evidence": "createRequestFactory(final ClientProperties properties), processPayment(final PaymentRequest request), getPayment(final String paymentId) - all use final"
+    },
+    {
+      "text": "Each RestClient bean has an explicit name via @Bean(name = \"...\") or @Bean(\"...\")",
+      "passed": true,
+      "evidence": "@Bean(name = \"paymentsRestClient\") and @Bean(name = \"notificationsRestClient\")"
+    },
+    {
+      "text": "Configuration properties are defined as Java records with @ConfigurationProperties",
+      "passed": true,
+      "evidence": "PaymentsClientProperties and NotificationsClientProperties are records with @ConfigurationProperties and @DefaultValue"
+    },
+    {
+      "text": "Both RestClient beans have connect and read timeouts configured",
+      "passed": true,
+      "evidence": "createRequestFactory sets connectTimeout and readTimeout via SimpleClientHttpRequestFactory"
+    },
+    {
+      "text": "Service class uses @Qualifier to inject the correct named RestClient bean",
+      "passed": true,
+      "evidence": "@Qualifier(\"paymentsRestClient\") on the RestClient field in PaymentIntegrationService"
+    },
+    {
+      "text": "No hardcoded URLs in the code — all URLs come from ConfigurationProperties",
+      "passed": true,
+      "evidence": "baseUrl comes from paymentsProperties.baseUrl() and notificationsProperties.baseUrl(), with @DefaultValue defaults in properties records"
+    }
+  ],
+  "pass_rate": 1.0
+}

@@ -1,0 +1,37 @@
+{
+  "eval_id": 2,
+  "configuration": "with_skill",
+  "expectations": [
+    {
+      "text": "All method parameters use the 'final' keyword",
+      "passed": true,
+      "evidence": "All preHandle and afterCompletion parameters have final: final HttpServletRequest request, final HttpServletResponse response, final Object handler, final Exception ex"
+    },
+    {
+      "text": "MDC.remove() is called in afterCompletion to prevent thread leaks",
+      "passed": true,
+      "evidence": "TraceIdInterceptor.afterCompletion calls MDC.remove(MDC_TRACE_KEY)"
+    },
+    {
+      "text": "Semaphore.release() is called in afterCompletion (even on exceptions)",
+      "passed": true,
+      "evidence": "RequestLockInterceptor.afterCompletion calls semaphore.release() guarded by StringUtils.isNotBlank(lockKey) and Objects.nonNull(semaphore)"
+    },
+    {
+      "text": "Uses StringUtils.isNotBlank() or StringUtils.isBlank() for header null/empty checks instead of == null",
+      "passed": true,
+      "evidence": "TraceIdInterceptor uses StringUtils.isNotBlank(traceId), RequestLockInterceptor uses StringUtils.isNotBlank(lockKey) and Objects.nonNull(semaphore)"
+    },
+    {
+      "text": "Interceptors are registered in a WebMvcConfigurer with addPathPatterns",
+      "passed": true,
+      "evidence": "WebMvcConfig implements WebMvcConfigurer, registers both interceptors with .addPathPatterns(\"/api/**\")"
+    },
+    {
+      "text": "Header names and MDC keys are private static final constants, not inline strings",
+      "passed": true,
+      "evidence": "TRACE_HEADER = \"X-Openpay-Trace-Id\", MDC_TRACE_KEY = \"traceId\", MAX_CONCURRENT_REQUESTS = 1"
+    }
+  ],
+  "pass_rate": 1.0
+}
