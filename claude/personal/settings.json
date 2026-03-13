@@ -1,0 +1,84 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash",
+      "Read",
+      "Edit",
+      "Write",
+      "Glob",
+      "Grep",
+      "NotebookEdit",
+      "WebSearch",
+      "WebFetch",
+      "Task",
+      "Skill",
+      "mcp__claude-in-chrome__*",
+      "mcp__postman__getWorkspaces",
+      "mcp__postman__getCollections",
+      "mcp__postman__createCollection",
+      "mcp__postman__createCollectionFolder",
+      "mcp__postman__createCollectionRequest",
+      "mcp__postman__getCollection",
+      "mcp__postman__deleteCollectionRequest"
+    ],
+    "deny": [
+      "Read(~/.ssh/**)",
+      "Edit(~/.ssh/**)",
+      "Write(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Edit(~/.aws/**)",
+      "Write(~/.aws/**)",
+      "Read(**/*.pem)",
+      "Edit(**/*.pem)",
+      "Read(**/*id_rsa*)",
+      "Edit(**/*id_rsa*)",
+      "Read(~/.config/gh/**)",
+      "Edit(~/.config/gh/**)",
+      "Read(~/.docker/config.json)",
+      "Edit(~/.docker/config.json)",
+      "Read(~/.kube/config)",
+      "Edit(~/.kube/config)",
+      "Read(~/.gnupg/**)",
+      "Edit(~/.gnupg/**)",
+      "Read(**/.npmrc)",
+      "Read(**/.pypirc)",
+      "Read(**/.netrc)"
+    ],
+    "ask": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Edit(.env)",
+      "Edit(.env.*)",
+      "Bash(rm -rf *)",
+      "Bash(sudo *)",
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "Bash(git reset --hard *)",
+      "Bash(git clean -fdx*)",
+      "Bash(dd if=*)",
+      "Bash(mkfs *)",
+      "Bash(chmod 777 *)",
+      "Bash(chmod 000 *)",
+      "Bash(chmod -R *)",
+      "Bash(chown -R *)"
+    ],
+    "defaultMode": "plan",
+    "additionalDirectories": [
+      "/mnt/c",
+      "/home/monti"
+    ]
+  },
+  "hooks": {},
+  "statusLine": {
+    "type": "command",
+    "command": "bash /home/monti/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "claude-mem@thedotmack": true
+  },
+  "outputStyle": "pair-programming",
+  "language": "Español",
+  "effortLevel": "high",
+  "bypassPermissions": true,
+  "skipDangerousModePermissionPrompt": true
+}
