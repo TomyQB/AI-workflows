@@ -39,39 +39,44 @@ If there are unstaged or untracked files, determine which ones are relevant. Sta
 
 ### Step 1.5: Project quality gates (audit, review & simplify)
 
-After analyzing the changes, check if the project defines quality commands:
-
-```bash
-ls .claude/commands/*-audit.md .claude/commands/*-review.md .claude/commands/audit.md .claude/commands/review.md 2>/dev/null
-```
+**Skip this entire step when:**
+- Only documentation files changed (`.md`, `.txt`, `.json`, `.yml`, `.yaml`, `.toml`)
+- Only config/CI files changed (no source code in the diff)
 
 **If source code files are in the changeset** (not just docs, config, or markdown):
 
-**1. Audit & Review (if available):**
-If any audit or review command files are found (matching `*-audit.md`, `*-review.md`, `audit.md`, or `review.md`):
-- Launch **all** found audit/review commands as **parallel subagents** (Agent tool) to keep the main context clean
-- Each subagent should read its corresponding command file and execute its instructions against the changed source files only (not the entire codebase)
+**1. Discover audit & review skills:**
+
+Search for skills whose directory name matches `*-audit` or `*-review` (each must contain a `SKILL.md`):
+
+1. **Local first** — Search in the project's `.claude/skills/` directory
+2. **Global fallback** — Only if NO matching skills were found locally, search in `~/.claude/skills/`
+
+All matching skills within the same level run in parallel (e.g., `java-review` + `vue-review` both in local → both run).
+
+```bash
+# Local search
+ls -d .claude/skills/*-audit .claude/skills/*-review 2>/dev/null | while read d; do [ -f "$d/SKILL.md" ] && echo "$d"; done
+
+# Global search (only if no local results)
+ls -d ~/.claude/skills/*-audit ~/.claude/skills/*-review 2>/dev/null | while read d; do [ -f "$d/SKILL.md" ] && echo "$d"; done
+```
+
+**2. Run audit & review skills (if any found):**
+- Launch **all** discovered skills as **parallel subagents** (Agent tool) to keep the main context clean
+- Each subagent should read the skill's `SKILL.md` and execute its instructions against the changed source files only (not the entire codebase)
 - Wait for results
 
-**If NO audit commands were found** but source code files changed:
-- Invoke the `owasp-audit` skill via the Skill tool as a fallback security check
-- The skill will audit only the changed files in condensed mode
-- This ensures every web/backend project gets a baseline security review even without project-specific audit commands
-
-**After subagents/skill complete:**
+**After subagents complete:**
 - If **Critical** or **Must Fix** issues are found: show them to the user and ask whether to fix before committing or proceed anyway
 - If only **Low/Informational/Nice to Have** issues: show a brief summary and continue with the commit flow
 - If no issues found: continue silently
 
-**2. Simplify (always — native skill):**
-After audit/review complete (or immediately if no audit/review commands exist), invoke the native `/simplify` skill:
+**3. Simplify (always — native skill):**
+After audit/review complete (or immediately if no audit/review skills were found), invoke the native `/simplify` skill:
 - Use the `Skill` tool with `skill: "simplify"` to review changed code for reuse, quality, and efficiency
 - If simplify makes changes to files, re-stage the modified files with `git add` before continuing to Step 2
 - If simplify finds no issues: continue silently
-
-**Skip this entire step when:**
-- Only documentation files changed (`.md`, `.txt`, `.json`, `.yml`, `.yaml`, `.toml`)
-- Only config/CI files changed (no source code in the diff)
 
 ### Step 2: Determine the commit type
 

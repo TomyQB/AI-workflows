@@ -1,0 +1,47 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "Edit",
+      "Write",
+      "NotebookEdit",
+      "Bash",
+      "WebSearch",
+      "WebFetch",
+      "Task",
+      "Skill"
+    ],
+    "defaultMode": "plan",
+    "additionalDirectories": [
+      "/mnt/c",
+      "/home/local"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /home/local/.claude/hooks/git-branch-check.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash /home/local/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "claude-mem@thedotmack": true
+  },
+  "outputStyle": "pair-programming",
+  "language": "Español",
+  "effortLevel": "high",
+  "bypassPermissions": true,
+  "skipDangerousModePermissionPrompt": true
+}

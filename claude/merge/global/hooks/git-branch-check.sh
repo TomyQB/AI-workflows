@@ -1,21 +1,6 @@
 #!/bin/bash
 # Primera edición/subagente de la sesión en repo Git: bloquea para preguntar sobre rama.
 INPUT=$(cat)
-AGENT_TYPE=$(echo "$INPUT" | jq -r '.agent_type // ""')
-
-# Subagentes no disparan este check
-if [ -n "$AGENT_TYPE" ]; then
-  exit 0
-fi
-
-# Si el tool es Agent, solo bloquear para developer/tester
-TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name // ""')
-if [ "$TOOL_NAME" = "Agent" ]; then
-  SUBAGENT=$(echo "$INPUT" | jq -r '.tool_input.subagent_type // ""')
-  if [ "$SUBAGENT" != "developer" ] && [ "$SUBAGENT" != "tester" ]; then
-    exit 0
-  fi
-fi
 
 SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // "default"')
 FLAG="/tmp/.claude-branch-asked-${SESSION_ID}"
