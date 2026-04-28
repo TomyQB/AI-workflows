@@ -1,54 +1,15 @@
 {
-  "permissions": {
-    "allow": [
-      "Read",
-      "Glob",
-      "Grep",
-      "Edit",
-      "Write",
-      "NotebookEdit",
-      "Bash",
-      "WebSearch",
-      "WebFetch",
-      "Task",
-      "Skill"
-    ],
-    "defaultMode": "plan",
-    "additionalDirectories": [
-      "/mnt/c",
-      "/home/local"
-    ]
+  "env": {
+    "CLAUDE_CODE_NO_FLICKER": "1"
   },
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash /home/local/.claude/hooks/java-delegation-guard.sh"
-          },
-          {
-            "type": "command",
-            "command": "bash /home/local/.claude/hooks/git-branch-check.sh"
-          }
-        ]
-      },
-      {
-        "matcher": "Agent",
+        "matcher": "Edit|Write|Agent",
         "hooks": [
           {
             "type": "command",
             "command": "bash /home/local/.claude/hooks/git-branch-check.sh"
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash /home/local/.claude/hooks/git-exe-guard.sh"
           }
         ]
       }
@@ -59,9 +20,28 @@
     "command": "bash /home/local/.claude/statusline-command.sh"
   },
   "enabledPlugins": {
-    "claude-mem@thedotmack": true
+    "claude-mem@thedotmack": true,
+    "skill-creator@claude-plugins-official": true
   },
-  "outputStyle": "pair-programming",
+  "extraKnownMarketplaces": {
+    "anthropic-agent-skills": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/skills"
+      }
+    },
+    "claude-plugins-official": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/anthropics/claude-plugins-official.git"
+      }
+    }
+  },
   "language": "Español",
-  "effortLevel": "high"
+  "effortLevel": "medium",
+  "skipDangerousModePermissionPrompt": true,
+  "preferredNotifChannel": "terminal_bell",
+  "remoteControlAtStartup": true,
+  "agentPushNotifEnabled": true,
+  "bypassPermissions": true
 }

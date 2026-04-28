@@ -1,48 +1,160 @@
-# Orquestacion del Flujo de Trabajo
+# Orquestación del Flujo de Trabajo
 
 ## 1. Modo Plan por Defecto
 
-Modo plan para tareas no triviales (3+ pasos o decisiones de arquitectura).
-Si algo se tuerce, PARA y replanifica. OBLIGATORIO: seguir `rules/plan-workflow.md`. Architect ANTES del plan.
+  Entra en modo plan para CUALQUIER tarea no trivial (3+ pasos o decisiones de arquitectura).
 
-## 2. Subagentes
+  Si algo se tuerce, PARA y replanifica inmediatamente - no sigas empujando.
 
-Roster: architect, developer, tester, security-auditor. Detalle en `rules/subagent-config.md`.
-Una tarea por subagente. Para problemas complejos, mas computo via subagentes.
+  Usa el modo plan para pasos de verificación, no solo para construir.
+
+  Escribe especificaciones detalladas de antemano para reducir la ambigüedad.
+
+
+## 2. Estrategia de Subagentes
+
+  Usa subagentes libremente para mantener limpio el contexto principal.
+
+  Delega la investigación, exploración y análisis paralelo a subagentes.
+
+  Para problemas complejos, métele más cómputo vía subagentes.
+
+  Una tarea por subagente para una ejecución enfocada.
+
+
+  ### Política de Selección de Modelo (Optimización de Tokens)
+
+  El parámetro `model` del Agent tool es **obligatorio** en cada invocación. Seleccionar según tipo de tarea:
+
+  | Tipo de tarea | `model` |
+  |---|---|
+  | Planificación, arquitectura, decisiones de diseño | **opus** |
+  | Análisis de seguridad, auditorías | **opus** |
+  | Exploración/investigación de codebase | **sonnet** |
+  | Escribir código productivo | **sonnet** |
+  | Escribir tests | **sonnet** |
+  | Commit, push, formateo, tareas mecánicas | **haiku** |
+
+  **Regla general**: Opus para PENSAR, Sonnet para ESCRIBIR código, Haiku para tareas MECÁNICAS.
+
 
 ## 3. Ciclo de Auto-Mejora
 
-Tras correccion del usuario: crear/actualizar rule en `/home/local/.claude/rules/` (global) o `.claude/rules/` (proyecto). Preguntar donde.
+  Escríbete reglas a ti mismo para prevenir el mismo error.
 
-## 4. Verificacion Antes de Terminar
+  Itera despiadadamente sobre estas lecciones hasta que la tasa de errores baje.
 
-Nunca marcar completo sin probar. Build, tests, logs, diff vs main.
-Preguntate: "Aprobaria esto un Staff Engineer?"
+  Revisa las lecciones al inicio de la sesión para el proyecto relevante.
 
-## 5. Principios y Estandares de Codigo
 
-- SOLID. Interfaces limpias. Si crece x10, no reescribir todo.
-- Tipado estricto. Nombres semanticos. Modularidad/DRY.
-- Manejo de errores gracil. Loguear contexto para depurar.
-- Simplicidad primero. Causa raiz, no parches. Impacto minimo.
-- Si se siente "hacky": implementar la solucion elegante.
-- Desafia tu propio trabajo: busca acoplamiento innecesario.
+## 4. Verificación Antes de Terminar
 
-## 6. Bugs
+  Nunca marques una tarea como completa sin probar que funciona.
 
-Arreglar autonomamente. Logs, errores, tests fallidos -> resolver. Cero hand-holding.
+  Haz un diff del comportamiento entre main y tus cambios cuando sea relevante.
 
-## 7. Comunicacion
+  Pregúntate: "¿Aprobaría esto un Staff Engineer?".
 
-SIEMPRE preguntar si ambiguo. Preguntar 3 veces > implementar mal 1 vez.
-Anti-servilismo: senalar problemas con alternativa concreta. Aceptar si te anulan.
-Declarar suposiciones ANTES de implementar. Si feedback negativo: PARAR y preguntar solucion elegante.
+  Haz un build, prueba que levanta la aplicación sin errores, corre tests, revisa logs, demuestra que es correcto.
 
-## 8. Setup Inicial del Proyecto
 
-Referencia: `/home/local/.claude/hooks/references/init-setup.md`
+## 5. Exige Elegancia y Arquitectura (Equilibrada)
 
-## 9. Archivos de Configuracion del Proyecto
+  Para cambios no triviales: haz una pausa y pregúntate "¿respeta esto los principios SOLID?".
+
+  **Escalabilidad Inteligente**: Diseña interfaces limpias y desacopladas. Piensa: "¿Si este módulo crece x10 mañana, tendré que reescribirlo todo?" Usa patrones de diseño y principios SOLID.
+
+  Si un arreglo se siente "hacky": "Sabiendo todo lo que sé ahora, implementa la solución elegante".
+
+  Desafía tu propio trabajo: busca acoplamiento innecesario y elimínalo antes de presentar.
+
+
+## 6. Arreglo Autónomo de Bugs
+
+  Cuando te den un reporte de bug: simplemente arréglalo. No pidas que te lleven de la mano.
+
+  Apunta a los logs, errores y tests que fallan - y luego resuélvelos.
+
+  Cero cambio de contexto requerido por parte del usuario.
+
+  Ve y arregla los tests que fallan sin que te digan cómo.
+
+
+## 7. Estándares de Código Profesional (Seniority)
+
+  **Tipado Estricto y Defensivo**: No uses `any` o tipos dinámicos si el lenguaje permite tipado fuerte. Valida los datos en los límites del sistema.
+
+  **Nombres Semánticos**: Las variables y funciones deben explicar *por qué* existen, no solo *qué* hacen. Evita abreviaturas crípticas.
+
+  **Modularidad y DRY**: Funciones pequeñas con una única responsabilidad. Si copias y pegas código, abstrae la lógica.
+
+  **Manejo de Errores**: Nunca te comas las excepciones (swallow errors). Maneja los fallos de forma grácil y loguea el contexto necesario para depurar.
+
+
+## 8. Principios Centrales
+
+  **Simplicidad Primero**: Haz que cada cambio sea lo más simple posible, pero no simplista. Impacta el mínimo código.
+
+  **Cero Vagancia**: Encuentra la causa raíz. Nada de arreglos temporales. Estándares de desarrollador Senior.
+
+  **Mantenibilidad**: Escribe código para el humano que lo leerá en 6 meses. Documenta el "por qué" de las decisiones complejas, no el "qué".
+
+  **Impacto Mínimo**: Los cambios solo deben tocar lo necesario. Evita introducir bugs por efectos secundarios (side-effects).
+
+
+## 9. Setup Inicial del Proyecto
+
+  - Si no existe `.claude/CLAUDE.md` en el proyecto: ejecutar `/init` automaticamente
+
+  - NUNCA anadir `.claude/CLAUDE.md` del proyecto a los commits (es configuracion local)
+
+  - SIEMPRE anadir `.claude` a `/.git/info/exclude` si no existe aun.
+
+
+## 10. Comunicacion e Interaccion
+
+  - **SIEMPRE pregunta** si algo no esta claro o tiene ambiguedad.
+
+  - Nunca asumir ni adivinar requisitos. Preguntar 3 veces > implementar mal 1 vez.
+
+  - Si recibes feedback negativo: PARAR completamente. Preguntar: "Que solucion elegante deberia implementar?"
+
+  - Confirmar entendimiento antes de codificar.
+
+  - **Anti-servilismo**: Si el enfoque del humano tiene problemas claros, senalarlo directamente con la desventaja concreta y una alternativa. Aceptar si te anulan. "¡Por supuesto!" seguido de implementar una mala idea no ayuda a nadie.
+
+  - **Superficie de suposiciones**: Ante ambiguedad no trivial, declarar suposiciones explicitamente ANTES de implementar. No rellenar silenciosamente requisitos ambiguos.
+
+
+## 11. Archivos de Configuracion del Proyecto
 
 El archivo de configuracion local es **`openpay-onboarding-partnerintegrator-srv-local_1.yml`** (con sufijo `_1`).
+
 NUNCA usar el archivo sin `_1`.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

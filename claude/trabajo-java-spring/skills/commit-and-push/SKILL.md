@@ -37,47 +37,6 @@ If there are unstaged or untracked files, determine which ones are relevant. Sta
 
 **Never stage files that likely contain secrets** (`.env`, `credentials.json`, `*.key`, etc.). Warn the user if these appear in the changes.
 
-### Step 1.5: Project quality gates (audit, review & simplify)
-
-**Skip this entire step when:**
-- Only documentation files changed (`.md`, `.txt`, `.json`, `.yml`, `.yaml`, `.toml`)
-- Only config/CI files changed (no source code in the diff)
-
-**If source code files are in the changeset** (not just docs, config, or markdown):
-
-**1. Discover audit & review skills:**
-
-Search for skills whose directory name matches `*-audit` or `*-review` (each must contain a `SKILL.md`):
-
-1. **Local first** — Search in the project's `.claude/skills/` directory
-2. **Global fallback** — Only if NO matching skills were found locally, search in `~/.claude/skills/`
-
-All matching skills within the same level run in parallel (e.g., `java-review` + `vue-review` both in local → both run).
-
-```bash
-# Local search
-ls -d .claude/skills/*-audit .claude/skills/*-review 2>/dev/null | while read d; do [ -f "$d/SKILL.md" ] && echo "$d"; done
-
-# Global search (only if no local results)
-ls -d ~/.claude/skills/*-audit ~/.claude/skills/*-review 2>/dev/null | while read d; do [ -f "$d/SKILL.md" ] && echo "$d"; done
-```
-
-**2. Run audit & review skills (if any found):**
-- Launch **all** discovered skills as **parallel subagents** (Agent tool) to keep the main context clean
-- Each subagent should read the skill's `SKILL.md` and execute its instructions against the changed source files only (not the entire codebase)
-- Wait for results
-
-**After subagents complete:**
-- If **Critical** or **Must Fix** issues are found: show them to the user and ask whether to fix before committing or proceed anyway
-- If only **Low/Informational/Nice to Have** issues: show a brief summary and continue with the commit flow
-- If no issues found: continue silently
-
-**3. Simplify (always — native skill):**
-After audit/review complete (or immediately if no audit/review skills were found), invoke the native `/simplify` skill:
-- Use the `Skill` tool with `skill: "simplify"` to review changed code for reuse, quality, and efficiency
-- If simplify makes changes to files, re-stage the modified files with `git add` before continuing to Step 2
-- If simplify finds no issues: continue silently
-
 ### Step 2: Determine the commit type
 
 Based on the diff content, classify the change into one of these types:
@@ -133,9 +92,9 @@ Rules for the description:
 - **Concise**: under 72 characters for the subject line
 - Focus on **why** the change exists, not what files changed
 
-For complex changes, add a body separated by a blank line explaining the reasoning.
+**Subject line ONLY — no body, no description, no extended explanation.** The commit message must be a single line. Do NOT add a blank line followed by a body paragraph, even for complex changes. If the change is complex, the subject must summarize the intent in one line.
 
-**No trailers, no co-author lines, no attribution.** The commit message must contain ONLY the conventional commit message itself — nothing else. The commit must look entirely human-authored.
+**No trailers, no co-author lines, no attribution.** The commit message must contain ONLY the single-line conventional commit subject — nothing else. The commit must look entirely human-authored.
 
 ### Step 6: Confirm and commit
 
@@ -145,14 +104,13 @@ Show the user the proposed commit message and the list of files being committed.
 - Option 2: Edit the message (let the user provide a modified version)
 - Option 3: Cancel
 
-If confirmed, execute the commit using a HEREDOC for proper formatting:
+If confirmed, execute the commit with a single-line message (no HEREDOC, no body):
 
 ```bash
-git commit -m "$(cat <<'EOF'
-feat(scope): description here
-EOF
-)"
+git commit -m "feat(scope): description here"
 ```
+
+The `-m` flag must receive a single-line string. Do NOT use HEREDOC, do NOT pass multiple `-m` flags, and do NOT include newlines in the message.
 
 ### Step 7: Verify git account (multi-account)
 
@@ -184,24 +142,6 @@ If the branch has no upstream, use `git push -u origin <branch>`.
 If the branch is `main` or `master`, **warn the user** that pushing directly to the main branch is risky and suggest creating a PR instead. Only push if they explicitly confirm.
 
 After a successful push, show the result and the remote URL if available.
-
-### Step 8.5: Archive active plan (if applicable)
-
-After a successful push, check if there are any active plans in `~/.claude/plans/active/`:
-
-```bash
-ls ~/.claude/plans/active/*.md 2>/dev/null
-```
-
-If active plans exist:
-- Show the list of active plans to the user
-- Ask: "¿Esta tarea completa algún plan activo? Si es así, ¿cuál archivo?"
-- Options: each plan filename + "Ninguno, no archivar"
-- If the user selects a plan: move it to `done/` with date prefix
-  ```bash
-  mv ~/.claude/plans/active/{plan}.md ~/.claude/plans/done/$(date +%Y-%m-%d)-{plan}.md
-  ```
-- If "Ninguno": continue without archiving
 
 ## Edge cases
 
