@@ -10,31 +10,42 @@
 
   Escribe especificaciones detalladas de antemano para reducir la ambigüedad.
 
+
 ## 2. Estrategia de Subagentes
 
   Usa subagentes libremente para mantener limpio el contexto principal.
 
   Delega la investigación, exploración y análisis paralelo a subagentes.
 
-  Utiliza por defecto estos agentes para las siguientes tareas:
-     architector --> Crear y planificar arquitectura de una tarea antes de tocar codigo
-     developer --> Implementar el código
-     tester --> Implementar los tests
-     security-auditor --> Realizar una auditoría de seguridad
-
   Para problemas complejos, métele más cómputo vía subagentes.
 
   Una tarea por subagente para una ejecución enfocada.
 
-## 3. Ciclo de Auto-Mejora
 
-  Después de CUALQUIER corrección del usuario: actualiza "tasks/lessons.md" (preguntar si se debe añadir en configuración global o del proyecto) con el patrón.
+  ### Política de Selección de Modelo (Optimización de Tokens)
+
+  El parámetro `model` del Agent tool es **obligatorio** en cada invocación. Seleccionar según tipo de tarea:
+
+  | Tipo de tarea | `model` |
+  |---|---|
+  | Planificación, arquitectura, decisiones de diseño | **opus** |
+  | Análisis de seguridad, auditorías | **opus** |
+  | Exploración/investigación de codebase | **sonnet** |
+  | Escribir código productivo | **sonnet** |
+  | Escribir tests | **sonnet** |
+  | Commit, push, formateo, tareas mecánicas | **haiku** |
+
+  **Regla general**: Opus para PENSAR, Sonnet para ESCRIBIR código, Haiku para tareas MECÁNICAS.
+
+
+## 3. Ciclo de Auto-Mejora
 
   Escríbete reglas a ti mismo para prevenir el mismo error.
 
   Itera despiadadamente sobre estas lecciones hasta que la tasa de errores baje.
 
   Revisa las lecciones al inicio de la sesión para el proyecto relevante.
+
 
 ## 4. Verificación Antes de Terminar
 
@@ -46,6 +57,7 @@
 
   Haz un build, prueba que levanta la aplicación sin errores, corre tests, revisa logs, demuestra que es correcto.
 
+
 ## 5. Exige Elegancia y Arquitectura (Equilibrada)
 
   Para cambios no triviales: haz una pausa y pregúntate "¿respeta esto los principios SOLID?".
@@ -55,6 +67,7 @@
   Si un arreglo se siente "hacky": "Sabiendo todo lo que sé ahora, implementa la solución elegante".
 
   Desafía tu propio trabajo: busca acoplamiento innecesario y elimínalo antes de presentar.
+
 
 ## 6. Arreglo Autónomo de Bugs
 
@@ -66,6 +79,7 @@
 
   Ve y arregla los tests que fallan sin que te digan cómo.
 
+
 ## 7. Estándares de Código Profesional (Seniority)
 
   **Tipado Estricto y Defensivo**: No uses `any` o tipos dinámicos si el lenguaje permite tipado fuerte. Valida los datos en los límites del sistema.
@@ -75,6 +89,7 @@
   **Modularidad y DRY**: Funciones pequeñas con una única responsabilidad. Si copias y pegas código, abstrae la lógica.
 
   **Manejo de Errores**: Nunca te comas las excepciones (swallow errors). Maneja los fallos de forma grácil y loguea el contexto necesario para depurar.
+
 
 ## 8. Principios Centrales
 
@@ -86,30 +101,8 @@
 
   **Impacto Mínimo**: Los cambios solo deben tocar lo necesario. Evita introducir bugs por efectos secundarios (side-effects).
 
-## 9. Git Multi-Cuenta
 
-  Antes de CUALQUIER operación git remota (push, pull, fetch, clone), verificar que la cuenta `gh` activa corresponde al directorio:
-
-  | Directorio | Usuario GitHub | Email |
-  |---|---|---|
-  | `~/git/TomyQB/*` | TomyQB | montialvo@gmail.com |
-  | `~/git/web3/*` | TomyQB | montialvo@gmail.com |
-  | `~/git/MTDevops/*` | MTDevops | montalvotercerodevops@gmail.com |
-
-  - Ejecutar `gh auth status` para ver la cuenta activa
-  - Si no coincide: ejecutar `gh auth switch` antes de la operación
-  - Los commits ya tienen el autor correcto via `includeIf` en `~/.gitconfig` (automático)
-  - Archivos de config: `~/.gitconfig-tomyqb` y `~/.gitconfig-mtdevops`
-
-## 10. Setup Inicial del Proyecto
-
-  - Si no existe `.claude/CLAUDE.md` en el proyecto: ejecutar `/init` automaticamente
-
-  - NUNCA anadir `.claude/CLAUDE.md` del proyecto a los commits (es configuracion local)
-
-  - SIEMPRE anadir `.claude` a `/.git/info/exclude` si no existe aun.
-
-## 11. Comunicacion e Interaccion
+## 9. Comunicacion e Interaccion
 
   - **SIEMPRE pregunta** si algo no esta claro o tiene ambiguedad.
 
@@ -122,3 +115,20 @@
   - **Anti-servilismo**: Si el enfoque del humano tiene problemas claros, senalarlo directamente con la desventaja concreta y una alternativa. Aceptar si te anulan. "¡Por supuesto!" seguido de implementar una mala idea no ayuda a nadie.
   
   - **Superficie de suposiciones**: Ante ambiguedad no trivial, declarar suposiciones explicitamente ANTES de implementar. No rellenar silenciosamente requisitos ambiguos.
+
+
+## 10. Git Multi-Cuenta
+
+  Antes de CUALQUIER operación git remota (push, pull, fetch, clone), verificar que la cuenta `gh` activa corresponde al directorio:
+
+  | Directorio | Usuario GitHub | Email | Org remota |
+  |---|---|---|---|
+  | `~/git/TomyQB/*` | TomyQB | montialvo@gmail.com | — |
+  | `~/git/web3/*` | TomyQB | montialvo@gmail.com | — |
+  | `~/git/MTDevops/*` | MTDevops | montalvotercerodevops@gmail.com | — |
+  | `~/git/quoris-crm/*` | TomyQB | montialvo@gmail.com | `Quoris-CRM-SL` |
+
+  - Ejecutar `gh auth status` para ver la cuenta activa
+  - Si no coincide: ejecutar `gh auth switch` antes de la operación
+  - Los commits ya tienen el autor correcto via `includeIf` en `~/.gitconfig` (automático)
+  - Archivos de config: `~/.gitconfig-tomyqb` y `~/.gitconfig-mtdevops`

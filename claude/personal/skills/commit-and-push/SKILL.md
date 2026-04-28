@@ -6,8 +6,11 @@ description: >
   or any variation like "commit and push", "sube los cambios", "haz commit",
   "commitea", "push this", "save my work to git". Also trigger when the user
   finishes a task and says something like "done, push it" or "listo, sube eso".
-  This skill handles the full flow: analyzing changes, generating the commit
-  message, committing, verifying git account, and pushing.
+  This skill handles ONLY: analyzing changes, generating the commit message,
+  committing, verifying git account, and pushing. It does NOT run any quality
+  gates (audits, reviews, simplify) — if the user wants those, use the
+  separate `full-review` skill BEFORE this one. It does NOT open PRs — use
+  the separate `create-pr` skill for that AFTER this one.
 ---
 
 # Conventional Commit & Push
@@ -37,36 +40,7 @@ If there are unstaged or untracked files, determine which ones are relevant. Sta
 
 **Never stage files that likely contain secrets** (`.env`, `credentials.json`, `*.key`, etc.). Warn the user if these appear in the changes.
 
-### Step 1.5: Project quality gates (audit, review & simplify)
-
-After analyzing the changes, check if the project defines quality commands:
-
-```bash
-ls .claude/commands/audit.md .claude/commands/review.md 2>/dev/null
-```
-
-**If source code files are in the changeset** (not just docs, config, or markdown):
-
-**1. Audit & Review (if available):**
-If at least one of `audit.md` or `review.md` exists in `.claude/commands/`:
-- Launch the available commands as **parallel subagents** (Agent tool) to keep the main context clean
-- Each subagent should read the corresponding command file and execute its instructions against the changed source files only (not the entire codebase)
-- Wait for results
-
-**After subagents complete:**
-- If **Critical** or **Must Fix** issues are found: show them to the user and ask whether to fix before committing or proceed anyway
-- If only **Low/Informational/Nice to Have** issues: show a brief summary and continue with the commit flow
-- If no issues found: continue silently
-
-**2. Simplify (always — native skill):**
-After audit/review complete (or immediately if no audit/review commands exist), invoke the native `/simplify` skill:
-- Use the `Skill` tool with `skill: "simplify"` to review changed code for reuse, quality, and efficiency
-- If simplify makes changes to files, re-stage the modified files with `git add` before continuing to Step 2
-- If simplify finds no issues: continue silently
-
-**Skip this entire step when:**
-- Only documentation files changed (`.md`, `.txt`, `.json`, `.yml`, `.yaml`, `.toml`)
-- Only config/CI files changed (no source code in the diff)
+This skill does NOT run audits, code reviews, or simplification. If the user wants a quality gate on the changes before committing, they should invoke the separate `full-review` skill first — this one trusts the staged changes as-is and moves straight to the commit message.
 
 ### Step 2: Determine the commit type
 
@@ -174,6 +148,8 @@ If the branch has no upstream, use `git push -u origin <branch>`.
 If the branch is `main` or `master`, **warn the user** that pushing directly to the main branch is risky and suggest creating a PR instead. Only push if they explicitly confirm.
 
 After a successful push, show the result and the remote URL if available.
+
+If the user wants a Pull Request opened (or refreshed) next, use the separate `create-pr` skill — this skill stops after the push.
 
 ## Edge cases
 
